@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book — Studioname</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050505;
+  --accent-warm:#e0631f;
+  --ink:#0a0908;
+  --paper:#f5efe0;
+  --blood:#c81f2e;
+  --blood-deep:#7e1018;
+  --ink-soft:#5a4632;
+  --ink-mid:#8a7458;
+  --line:rgba(245,239,224,0.18);
+  --font-comic:'Titan One', cursive;
+  --font-display:'Bebas Neue', sans-serif;
+  --font-mono:'Space Mono', monospace;
+  --font-body:'Archivo', sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background-color:var(--bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-opacity='0.07'%3E%3Cpath d='M40 30 L46 46 L62 48 L49 58 L54 74 L40 64 L26 74 L31 58 L18 48 L34 46 Z'/%3E%3Cpath d='M190 40 L194 52 L206 53 L197 61 L200 73 L190 66 L180 73 L183 61 L174 53 L186 52 Z'/%3E%3Cpath d='M120 150 Q140 150 140 170 Q140 190 120 190 Q100 190 100 170 Q100 155 115 152'/%3E%3Cpath d='M60 190 L66 206 L82 208 L69 218 L74 234 L60 224 L46 234 L51 218 L38 208 L54 206 Z'/%3E%3Cpath d='M210 170 L214 182 L226 183 L217 191 L220 203 L210 196 L200 203 L203 191 L194 183 L206 182 Z'/%3E%3Cpath d='M150 40 L158 20 L166 40 L186 32 L172 48 L192 56 L170 60 L178 80 L162 66 L150 84 L148 62 L128 68 L144 52 L128 40 L150 44 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:repeat;
+  background-attachment:fixed;
+  color:var(--paper);
+  font-family:var(--font-body);
+  font-weight:400;
+  line-height:1.6;
+}
+a{color:inherit; text-decoration:none;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+::selection{background:var(--blood); color:var(--paper);}
+img{max-width:100%; display:block;}
+
+.scanlines{
+  position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay;
+}
+/* doodle pattern now lives on body background directly (see above) so it sits
+   truly behind every card/div instead of overlaying them — this element is
+   kept in the markup for backward compatibility but does nothing visually. */
+.grain{display:none;}
+
+/* ---------- chaos strip divider ---------- */
+.tartan{
+  height:16px;
+  background-image:
+    linear-gradient(135deg, var(--ink) 25%, transparent 25%),
+    linear-gradient(225deg, var(--ink) 25%, transparent 25%),
+    linear-gradient(45deg, var(--ink) 25%, transparent 25%),
+    linear-gradient(315deg, var(--ink) 25%, transparent 25%);
+  background-position:8px 0, 8px 0, 0 0, 0 0;
+  background-size:16px 16px;
+  background-repeat:repeat-x;
+  background-color:var(--blood);
+}
+
+/* ---------- header + site nav ---------- */
+header{
+  position:sticky; top:0; z-index:100;
+  background:var(--ink);
+  border-bottom:3px solid var(--paper);
+}
+.header-inner{display:flex; align-items:center; justify-content:space-between; padding:14px 32px; gap:16px; flex-wrap:wrap;}
+.logo{display:flex; align-items:baseline; gap:4px;}
+.logo .s1{font-family:var(--font-display); font-size:24px; letter-spacing:1px; color:var(--paper); transform:rotate(-2deg); display:inline-block;}
+.logo .s2{
+  font-family:var(--font-comic); font-size:20px; color:var(--paper); transform:rotate(2deg); display:inline-block;
+  -webkit-text-stroke:1.5px var(--ink); text-shadow:2px 2px 0 var(--blood);
+}
+.rec{
+  display:flex; align-items:center; gap:7px; font-family:var(--font-mono); font-weight:700; font-size:11px;
+  color:var(--ink); background:var(--paper); padding:5px 12px; transform:rotate(-2deg);
+  border:2px solid var(--ink); box-shadow:3px 3px 0 var(--blood);
+}
+.rec .dot{width:6px; height:6px; border-radius:50%; background:var(--blood); animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.15;}}
+
+.site-nav{display:flex; gap:9px; flex-wrap:wrap; font-family:var(--font-mono); font-weight:700; font-size:10.5px;}
+.site-nav a{
+  color:var(--ink); letter-spacing:0.5px; padding:6px 11px; background:var(--paper);
+  border:2px solid var(--ink); box-shadow:3px 3px 0 var(--blood-deep); transition:all 0.1s; display:inline-block;
+}
+.site-nav a:nth-child(1){transform:rotate(-2deg);}
+.site-nav a:nth-child(2){transform:rotate(2deg);}
+.site-nav a:nth-child(3){transform:rotate(-1deg);}
+.site-nav a:nth-child(4){transform:rotate(1.5deg);}
+.site-nav a:nth-child(5){transform:rotate(-1.5deg);}
+.site-nav a:nth-child(6){transform:rotate(2deg);}
+.site-nav a:nth-child(7){transform:rotate(-2deg);}
+.site-nav a:nth-child(8){transform:rotate(1deg);}
+.site-nav a .num{color:var(--blood); font-weight:700; margin-right:4px;}
+.site-nav a:hover{transform:translate(-2px,-2px) rotate(0deg); box-shadow:5px 5px 0 var(--blood);}
+.site-nav a.active{background:var(--blood); color:var(--paper); box-shadow:3px 3px 0 var(--ink);}
+
+/* ---------- hero / crt ---------- */
+.hero{padding:56px 32px 76px; text-align:center; position:relative;}
+.hero-eyebrow{
+  font-family:var(--font-mono); font-size:11px; color:var(--paper);
+  letter-spacing:3px; margin-bottom:20px; text-transform:uppercase; opacity:0.85;
+}
+.crt{
+  position:relative; max-width:640px; margin:0 auto;
+  background:var(--ink); border:8px solid var(--paper); padding:14px;
+  box-shadow: 8px 8px 0 var(--blood);
+}
+.crt::before, .crt::after{
+  content:''; position:absolute; width:50px; height:50px; z-index:20;
+  background-repeat:no-repeat; background-size:contain;
+}
+.crt::before{
+  top:-22px; left:-22px; transform:rotate(-15deg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%23f5efe0' stroke='%230a0908' stroke-width='4'/%3E%3Ccircle cx='36' cy='42' r='7' fill='%230a0908'/%3E%3Ccircle cx='64' cy='42' r='7' fill='%230a0908'/%3E%3Cpath d='M25 62 L32 70 L39 62 L46 70 L53 62 L60 70 L67 62 L74 70' fill='none' stroke='%230a0908' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.crt::after{
+  bottom:-20px; right:-20px; transform:rotate(12deg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,4 61,38 97,38 68,59 79,94 50,73 21,94 32,59 3,38 39,38' fill='%23f5efe0' stroke='%230a0908' stroke-width='4'/%3E%3C/svg%3E");
+}
+.crt-screen{
+  position:relative; overflow:hidden; aspect-ratio:4/3;
+  background:#050505; display:flex; align-items:center; justify-content:center; flex-direction:column;
+  animation:boot-flicker 1s ease-out;
+}
+.crt-screen::before{
+  content:''; position:absolute; inset:0; z-index:3; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(200,31,46,0.07) 0px, rgba(200,31,46,0.07) 1px, transparent 1px, transparent 3px);
+}
+#static-video, #static-canvas{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;
+  opacity:1; transition:opacity 0.8s ease;
+}
+#static-video.settled, #static-canvas.settled{opacity:0.6;}
+#static-canvas{display:none;}
+.buffering{
+  position:absolute; inset:0; z-index:6; display:flex; align-items:center; justify-content:center;
+  background:#050505; transition:opacity 0.5s ease;
+}
+.buffering.hidden{opacity:0; pointer-events:none;}
+.buffer-dots{font-family:var(--font-mono); font-size:12px; color:var(--blood); letter-spacing:2px;}
+.buffer-dots span{animation:blink 1s infinite;}
+.buffer-dots span:nth-child(2){animation-delay:0.2s;}
+.buffer-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes blink{0%,100%{opacity:0.15;} 50%{opacity:1;}}
+@keyframes boot-flicker{
+  0%{filter:brightness(3) contrast(1.4); transform:scaleY(0.02);}
+  5%{filter:brightness(0.2); transform:scaleY(1);}
+  10%{filter:brightness(2);}
+  15%{filter:brightness(0.5);}
+  100%{filter:brightness(1) contrast(1); transform:scaleY(1);}
+}
+.crt-content{
+  position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; width:100%;
+  opacity:0; transition:opacity 0.6s ease;
+}
+.crt-content.visible{opacity:1;}
+.crt-headline{padding:0 16px; text-align:center; display:flex; flex-wrap:wrap; justify-content:center; gap:8px 10px;}
+.rn{display:inline-block; font-family:var(--font-comic); font-size:clamp(20px,5vw,32px); letter-spacing:0.5px; padding:2px 8px; line-height:1.15; -webkit-text-stroke:1.5px var(--ink);}
+.rn.r1{color:var(--paper); transform:rotate(-4deg); text-shadow:2px 2px 0 var(--blood);}
+.rn.r2{color:var(--blood); transform:rotate(3deg); text-shadow:2px 2px 0 var(--ink);}
+.rn.r3{color:var(--paper); transform:rotate(2deg); text-shadow:2px 2px 0 var(--blood);}
+.rn.r4{color:var(--accent-warm); transform:rotate(-2deg); text-shadow:2px 2px 0 var(--ink);}
+.crt-sub{
+  font-family:var(--font-mono); font-size:11px; color:var(--paper);
+  margin-top:16px; letter-spacing:1px; text-align:center; text-transform:uppercase; opacity:0.75;
+}
+.channel-readout{
+  position:absolute; top:14px; right:16px; z-index:5;
+  font-family:var(--font-mono); font-size:10px; color:var(--paper);
+  background:var(--blood); padding:3px 9px; letter-spacing:1px;
+}
+.tv-power{
+  position:absolute; top:14px; left:16px; z-index:5;
+  font-family:var(--font-mono); font-size:10px; color:var(--paper);
+  display:flex; align-items:center; gap:6px; background:rgba(0,0,0,0.6); padding:3px 9px;
+}
+.tv-power .led{width:6px; height:6px; border-radius:50%; background:var(--blood); animation:pulse 1.2s infinite;}
+.tv-nav{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:26px; padding:0 16px;}
+.tv-nav a{
+  font-family:var(--font-mono); font-weight:700; font-size:11px; letter-spacing:0.5px;
+  background:var(--paper); color:var(--ink); border:2px solid var(--ink);
+  padding:7px 12px; box-shadow:3px 3px 0 var(--blood); transition:all 0.1s;
+}
+.tv-nav a:nth-child(odd){transform:rotate(-2deg);}
+.tv-nav a:nth-child(even){transform:rotate(2deg);}
+.tv-nav a:hover{transform:translate(-2px,-2px) rotate(0deg); box-shadow:5px 5px 0 var(--blood);}
+.tv-nav a .num{color:var(--blood); margin-right:5px;}
+.hero-cta{margin-top:30px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+
+/* ---------- buttons ---------- */
+.btn{
+  font-family:var(--font-mono); font-weight:700; font-size:12px; letter-spacing:1px;
+  padding:13px 26px; border:2px solid var(--ink); color:var(--ink);
+  transition:all 0.1s; cursor:pointer; background:var(--paper); display:inline-block; text-transform:uppercase;
+  box-shadow:4px 4px 0 var(--ink);
+}
+.btn:hover{transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--ink);}
+.btn:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink);}
+.btn.solid{background:var(--blood); border-color:var(--ink); color:var(--paper); box-shadow:4px 4px 0 var(--ink);}
+.btn.solid:hover{box-shadow:6px 6px 0 var(--ink);}
+
+/* ---------- page header ---------- */
+.page-head{padding:56px 32px 40px;}
+.page-head .chan{font-family:var(--font-mono); color:var(--ink); background:var(--paper); padding:2px 10px; font-size:13px; letter-spacing:2px; border:2px solid var(--ink);}
+.page-head .chan::before{content:'\2605  ';}
+.page-head h1{
+  font-family:var(--font-comic); font-size:clamp(32px,6vw,54px);
+  letter-spacing:0.5px; margin-top:10px; text-transform:uppercase; color:var(--paper);
+  -webkit-text-stroke:2px var(--ink); text-shadow:3px 3px 0 var(--blood);
+}
+.page-head .sub{font-family:var(--font-mono); font-size:12px; color:var(--paper); margin-top:14px; max-width:560px; opacity:0.85;}
+
+/* ---------- section shell ---------- */
+section{padding:68px 32px; border-top:3px solid var(--ink);}
+.section-head{display:flex; align-items:baseline; gap:14px; margin-bottom:40px;}
+.section-head .chan{font-family:var(--font-mono); color:var(--ink); background:var(--paper); padding:2px 10px; font-size:13px; letter-spacing:2px; border:2px solid var(--ink);}
+.section-head .chan::before{content:'\2605  ';}
+.section-head h2{
+  font-family:var(--font-comic); font-size:clamp(22px,4vw,36px); letter-spacing:0.5px; text-transform:uppercase;
+  color:var(--paper); -webkit-text-stroke:1.5px var(--ink); text-shadow:2px 2px 0 var(--blood);
+}
+.section-note{font-family:var(--font-mono); font-size:12px; color:var(--paper); margin-top:8px; max-width:520px; opacity:0.8;}
+
+/* ---------- portfolio grid — taped polaroids ---------- */
+.portfolio-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:28px; padding:6px;}
+.p-tile{
+  background:var(--paper); position:relative; padding:14px 14px 34px; border:3px solid var(--ink);
+  box-shadow:5px 5px 0 var(--ink); transition:transform 0.2s;
+}
+.portfolio-grid .p-tile:nth-child(6n+1){transform:rotate(-2.5deg);}
+.portfolio-grid .p-tile:nth-child(6n+2){transform:rotate(1.5deg);}
+.portfolio-grid .p-tile:nth-child(6n+3){transform:rotate(-1deg);}
+.portfolio-grid .p-tile:nth-child(6n+4){transform:rotate(2.5deg);}
+.portfolio-grid .p-tile:nth-child(6n+5){transform:rotate(-2deg);}
+.portfolio-grid .p-tile:nth-child(6n+6){transform:rotate(1deg);}
+.p-tile:hover{transform:rotate(0deg) scale(1.04) !important; z-index:5; box-shadow:8px 8px 0 var(--blood);}
+.p-tile::before{
+  content:''; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-3deg);
+  width:46px; height:16px; background:rgba(200,31,46,0.35); border:1px solid rgba(10,9,8,0.25);
+}
+.p-tile svg{width:70%; height:70%; margin:0 auto; stroke:var(--ink); opacity:0.9; display:block;}
+.p-tag{position:absolute; bottom:10px; left:0; right:0; text-align:center; font-family:var(--font-mono); font-size:10px; color:var(--ink); letter-spacing:0.5px;}
+
+/* ---------- instagram embed ---------- */
+.ig-block{
+  background:var(--paper); border:3px solid var(--ink); color:var(--ink);
+  padding:32px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  box-shadow:5px 5px 0 var(--ink);
+}
+.ig-block .ig-text p{font-family:var(--font-mono); font-size:12px; color:var(--ink-soft); margin-top:6px; max-width:420px;}
+
+/* ---------- booking ---------- */
+.booking-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px;}
+@media (max-width:860px){.booking-grid{grid-template-columns:1fr;}}
+.cal{background:var(--paper); color:var(--ink); border:3px solid var(--ink); padding:24px; box-shadow:5px 5px 0 var(--ink);}
+.cal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-family:var(--font-comic); font-size:16px; letter-spacing:0.5px;}
+.cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center;}
+.cal-grid .dow{font-family:var(--font-mono); font-size:10px; color:var(--ink-mid); padding-bottom:6px;}
+.cal-day{aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:12px; color:#c9bfa8;}
+.cal-day.open{background:rgba(200,31,46,0.14); color:var(--blood); cursor:pointer; border:1px solid rgba(200,31,46,0.4);}
+.cal-day.open:hover{background:var(--blood); color:var(--paper);}
+.cal-day.taken{color:var(--ink-mid); opacity:0.5; text-decoration:line-through;}
+.cal-legend{display:flex; gap:18px; margin-top:16px; font-family:var(--font-mono); font-size:10px; color:var(--ink-soft);}
+.cal-legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot-sw{width:8px; height:8px; display:inline-block;}
+
+.form{display:flex; flex-direction:column; gap:16px;}
+.form-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:560px){.form-row{grid-template-columns:1fr;}}
+.form-group h4{
+  font-family:var(--font-comic); font-size:15px; color:var(--paper); -webkit-text-stroke:1px var(--ink);
+  text-shadow:2px 2px 0 var(--blood); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;
+}
+.form label{font-family:var(--font-mono); font-size:11px; color:var(--paper); letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px;}
+.req{color:var(--blood); -webkit-text-stroke:0;}
+.hint{font-family:var(--font-mono); font-size:10px; color:var(--paper); opacity:0.6; margin-top:4px; line-height:1.5;}
+.photo-callout{
+  background:var(--paper); color:var(--ink); border:2px dashed var(--blood); padding:12px 14px;
+  font-family:var(--font-mono); font-size:12px; display:flex; align-items:center; gap:10px;
+}
+.photo-callout .req{margin-left:auto; flex-shrink:0;}
+.form input, .form select, .form textarea{
+  background:var(--paper); border:2px solid var(--ink); color:var(--ink);
+  padding:12px 13px; font-family:var(--font-body); font-size:14px; width:100%;
+}
+.form textarea{min-height:90px; resize:vertical;}
+.placement-readout{background:var(--paper); color:var(--blood); border:2px dashed var(--blood); padding:10px 13px; font-family:var(--font-mono); font-size:12px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+.flow-note{font-family:var(--font-mono); font-size:11px; color:var(--paper); border-left:4px solid var(--blood); padding-left:12px; margin-top:6px; opacity:0.85;}
+
+/* ---------- placement ---------- */
+.placement-wrap{display:grid; grid-template-columns:280px 1fr; gap:48px; align-items:start;}
+@media (max-width:760px){.placement-wrap{grid-template-columns:1fr;}}
+.body-svg{background:var(--paper); border:3px solid var(--ink); padding:20px; box-shadow:5px 5px 0 var(--ink);}
+.body-svg svg{width:100%; height:auto;}
+.body-region{fill:transparent; stroke:var(--ink-mid); stroke-width:1; cursor:pointer; transition:fill 0.15s;}
+.body-region:hover, .body-region.active{fill:rgba(200,31,46,0.22); stroke:var(--blood);}
+.placement-info h3{font-family:var(--font-comic); font-size:22px; letter-spacing:0.5px; margin-bottom:10px; text-transform:uppercase; color:var(--paper); -webkit-text-stroke:1px var(--ink);}
+.placement-list{font-family:var(--font-mono); font-size:11px; color:var(--paper); line-height:2; opacity:0.85;}
+
+/* ---------- about ---------- */
+.about-grid{display:grid; grid-template-columns:280px 1fr; gap:48px; align-items:start;}
+@media (max-width:760px){.about-grid{grid-template-columns:1fr;}}
+.about-photo{background:var(--paper); border:3px solid var(--ink); aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:11px; color:var(--ink); text-align:center; padding:20px; transform:rotate(-2deg); box-shadow:6px 6px 0 var(--blood);}
+.about-copy p{margin-bottom:16px; font-size:15px;}
+.about-facts{margin-top:24px; display:flex; flex-direction:column; gap:8px;}
+.about-facts .row{display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; border-bottom:1px dashed var(--line); padding:8px 0; max-width:420px;}
+.about-facts .row span:first-child{color:var(--paper); opacity:0.7; text-transform:uppercase;}
+
+/* ---------- policy ---------- */
+.policy-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px;}
+.policy-card{background:var(--paper); color:var(--ink); padding:26px; border:3px solid var(--ink); border-left:6px solid var(--blood); box-shadow:5px 5px 0 var(--ink);}
+.policy-card .k{font-family:var(--font-comic); font-size:16px; color:var(--blood); letter-spacing:0.5px; margin-bottom:8px; text-transform:uppercase;}
+.policy-card p{font-size:13.5px; color:var(--ink-soft);}
+.payment-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px;}
+.pay-pill{font-family:var(--font-mono); font-size:11px; padding:8px 14px; border:2px solid var(--ink); color:var(--paper); background:transparent;}
+.pay-pill.primary{border-color:var(--ink); color:var(--ink); background:var(--paper); box-shadow:3px 3px 0 var(--blood);}
+
+/* ---------- faq ---------- */
+.faq-item{border-bottom:2px dashed var(--line); padding:18px 0;}
+.faq-q{display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-family:var(--font-comic); font-size:16px; letter-spacing:0.5px; text-transform:uppercase; color:var(--paper); -webkit-text-stroke:1px var(--ink);}
+.faq-q .plus{color:var(--blood); font-size:22px; -webkit-text-stroke:0;}
+.faq-a{max-height:0; overflow:hidden; transition:max-height 0.25s ease; font-size:14px; color:var(--paper); opacity:0.85;}
+.faq-item.open .faq-a{max-height:200px; margin-top:12px;}
+.faq-item.open .plus{transform:rotate(45deg);}
+
+/* ---------- visit ---------- */
+.loc-grid{display:grid; grid-template-columns:1fr 1fr; gap:40px;}
+@media (max-width:760px){.loc-grid{grid-template-columns:1fr;}}
+.hours-row{display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:12px; padding:8px 0; border-bottom:1px dashed var(--line); color:var(--paper);}
+.walkin{color:var(--blood); font-weight:700; -webkit-text-stroke:0;}
+
+/* ---------- flash ---------- */
+.flash-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:26px; padding:6px;}
+.flash-tile{background:var(--paper); position:relative; display:flex; flex-direction:column; border:3px solid var(--ink); box-shadow:5px 5px 0 var(--ink); transition:transform 0.2s;}
+.flash-grid .flash-tile:nth-child(4n+1){transform:rotate(-2deg);}
+.flash-grid .flash-tile:nth-child(4n+2){transform:rotate(1.5deg);}
+.flash-grid .flash-tile:nth-child(4n+3){transform:rotate(-1.5deg);}
+.flash-grid .flash-tile:nth-child(4n+4){transform:rotate(2deg);}
+.flash-tile:not(.taken):hover{transform:rotate(0deg) scale(1.04) !important; z-index:5; box-shadow:8px 8px 0 var(--blood);}
+.flash-art{aspect-ratio:1; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; padding:14px;}
+.flash-art svg{width:62%; height:62%; stroke:var(--ink); opacity:0.9;}
+.flash-status{
+  position:absolute; top:8px; left:8px; font-family:var(--font-mono); font-size:9px; letter-spacing:1px;
+  padding:3px 8px; background:var(--blood); color:var(--paper); text-transform:uppercase; transform:rotate(-3deg);
+}
+.flash-status.taken{background:var(--ink); color:var(--paper); opacity:0.6;}
+.flash-meta{padding:10px 14px 14px; display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--line);}
+.flash-meta .name{font-family:var(--font-mono); font-size:10px; color:var(--ink-soft); letter-spacing:0.5px;}
+.flash-meta .price{font-family:var(--font-comic); font-size:16px; color:var(--ink);}
+.flash-tile.taken .flash-art svg{opacity:0.3;}
+.flash-tile.taken .flash-meta .price{color:var(--ink-mid); text-decoration:line-through;}
+
+footer{padding:44px 32px; text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--paper); border-top:3px solid var(--ink); opacity:0.9;}
+footer .sign-off{font-family:var(--font-comic); font-size:16px; color:var(--paper); -webkit-text-stroke:1px var(--ink); text-shadow:2px 2px 0 var(--blood);}
+footer .foot-links{margin-top:12px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="grain"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="logo"><span class="s1">STUDIO</span><span class="s2">NAME</span></div>
+    <nav class="site-nav">
+      <a href="index.html"><span class="num">01</span>HOME</a>
+      <a href="flash.html"><span class="num">02</span>FLASH</a>
+      <a href="about.html"><span class="num">03</span>ABOUT</a>
+      <a href="book.html" class="active"><span class="num">04</span>BOOK</a>
+      <a href="policy.html"><span class="num">05</span>POLICY</a>
+      <a href="faq.html"><span class="num">06</span>FAQ</a>
+      <a href="visit.html"><span class="num">07</span>VISIT</a>
+    </nav>
+    <div class="rec"><span class="dot"></span>LIVE</div>
+  </div>
+</header>
+<div class="tartan"></div>
+
+<div class="page-head">
+  <span class="chan">04 /</span>
+  <h1>Book a session</h1>
+  <div class="sub">Pick an open day, mark where you want it, and tell me about the piece. Nothing is confirmed until you hear back — deposit instructions go out after approval.</div>
+</div>
+
+<section style="border-top:none; padding-top:0;">
+  <div class="wrap">
+
+    <div class="section-head" style="margin-bottom:20px;"><span class="chan">STEP 1</span><h2 style="font-size:22px;">Pick a date</h2></div>
+    <div class="cal" style="max-width:460px; margin-bottom:56px;">
+      <div class="cal-head"><span>JULY 2026</span><span style="opacity:0.6;">‹  ›</span></div>
+      <div class="cal-grid">
+        <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
+        <div class="cal-day"></div><div class="cal-day"></div><div class="cal-day">1</div><div class="cal-day taken">2</div><div class="cal-day open">3</div><div class="cal-day">4</div><div class="cal-day open">5</div>
+        <div class="cal-day">6</div><div class="cal-day open">7</div><div class="cal-day taken">8</div><div class="cal-day">9</div><div class="cal-day open">10</div><div class="cal-day">11</div><div class="cal-day open">12</div>
+        <div class="cal-day">13</div><div class="cal-day open">14</div><div class="cal-day">15</div><div class="cal-day open">16</div><div class="cal-day taken">17</div><div class="cal-day">18</div><div class="cal-day open">19</div>
+      </div>
+      <div class="cal-legend">
+        <span><i class="dot-sw" style="background:rgba(200,31,46,0.4)"></i>Open — click to select</span>
+        <span><i class="dot-sw" style="background:var(--blood);opacity:0.5"></i>Taken</span>
+      </div>
+      <div class="placement-readout" style="margin-top:16px;">
+        <span id="f-date-display">— pick a date above —</span>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-bottom:20px;"><span class="chan">STEP 2</span><h2 style="font-size:22px;">Mark the placement</h2></div>
+    <div class="placement-wrap" style="margin-bottom:56px;">
+      <div class="body-svg">
+        <svg viewBox="0 0 200 400">
+          <ellipse class="body-region" data-name="Head / neck" cx="100" cy="30" rx="22" ry="26"/>
+          <rect class="body-region" data-name="Chest" x="65" y="70" width="70" height="45" rx="8"/>
+          <rect class="body-region" data-name="Ribs" x="55" y="115" width="35" height="45" rx="8"/>
+          <rect class="body-region" data-name="Ribs" x="110" y="115" width="35" height="45" rx="8"/>
+          <rect class="body-region" data-name="Stomach" x="80" y="160" width="40" height="35" rx="8"/>
+          <rect class="body-region" data-name="Left forearm" x="15" y="120" width="24" height="70" rx="10"/>
+          <rect class="body-region" data-name="Left upper arm" x="30" y="72" width="26" height="55" rx="10"/>
+          <rect class="body-region" data-name="Left wrist / hand" x="10" y="190" width="24" height="30" rx="8"/>
+          <rect class="body-region" data-name="Right forearm" x="161" y="120" width="24" height="70" rx="10"/>
+          <rect class="body-region" data-name="Right upper arm" x="144" y="72" width="26" height="55" rx="10"/>
+          <rect class="body-region" data-name="Right wrist / hand" x="166" y="190" width="24" height="30" rx="8"/>
+          <rect class="body-region" data-name="Thigh" x="70" y="200" width="28" height="70" rx="10"/>
+          <rect class="body-region" data-name="Thigh" x="102" y="200" width="28" height="70" rx="10"/>
+          <rect class="body-region" data-name="Calf" x="72" y="275" width="24" height="65" rx="10"/>
+          <rect class="body-region" data-name="Calf" x="104" y="275" width="24" height="65" rx="10"/>
+          <rect class="body-region" data-name="Ankle / foot" x="70" y="345" width="26" height="35" rx="8"/>
+          <rect class="body-region" data-name="Ankle / foot" x="104" y="345" width="26" height="35" rx="8"/>
+        </svg>
+      </div>
+      <div class="placement-info">
+        <h3 id="region-out">No region selected</h3>
+        <p style="font-size:13px; color:var(--paper); opacity:0.75; margin-bottom:20px;">Tap the map — it fills into the location field below automatically.</p>
+        <div class="placement-readout" id="placement-confirm" style="display:none; margin-bottom:20px;">
+          <span>Saved: <em>—</em></span>
+        </div>
+        <div class="placement-list">NOT CURRENTLY TATTOOING:<br>Face · Neck (front) · Hands (palms) — ask about exceptions</div>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-bottom:20px;"><span class="chan">STEP 3</span><h2 style="font-size:22px;">Your details</h2></div>
+
+    <form class="form" id="booking-form">
+
+      <div class="form-group">
+        <h4>Personal info</h4>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label>Name <span class="req">*</span></label>
+          <input type="text" id="f-name" placeholder="Your name">
+        </div>
+        <div>
+          <label>Pronouns</label>
+          <input type="text" id="f-pronouns" placeholder="Optional">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label>Age or birth date <span class="req">*</span></label>
+          <input type="text" id="f-age" placeholder="Must be 18+">
+        </div>
+        <div>
+          <label>Instagram</label>
+          <input type="text" id="f-instagram" placeholder="@handle">
+        </div>
+      </div>
+
+      <div>
+        <label>Phone number</label>
+        <input type="text" id="f-phone" placeholder="Optional if Instagram is filled in above">
+        <div class="hint">At least one of Instagram or phone is required so I can reach you.</div>
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <h4>Tattoo details</h4>
+      </div>
+
+      <div>
+        <label>Description</label>
+        <textarea id="f-description" placeholder="Anything else worth knowing — optional"></textarea>
+      </div>
+
+      <div>
+        <label>Tell me about your idea <span class="req">*</span></label>
+        <textarea id="f-idea" placeholder="Subject / theme — be as specific as you can, including symbols, words, or meaning if any. Ex: &quot;I&rsquo;d like a dragon wrapping around a crescent moon, shown in profile.&quot;"></textarea>
+      </div>
+
+      <div class="photo-callout">
+        Attach at least 1 photo of existing work you like on the next step — it helps me understand your taste. <span class="req">Required *</span>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label>Size <span class="req">*</span></label>
+          <input type="text" id="f-size" placeholder='e.g. 3x4 inches, or "palm-sized"'>
+        </div>
+        <div>
+          <label>Black or color ink? <span class="req">*</span></label>
+          <select id="f-ink">
+            <option value="">Select one</option>
+            <option value="Black & grey">Black & grey</option>
+            <option value="Full color">Full color</option>
+            <option value="Both / open to either">Both / open to either</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label>Location on your body <span class="req">*</span></label>
+        <div class="placement-readout">
+          <span id="f-placement-display">— none yet, tap the map above —</span>
+        </div>
+        <div class="hint">Ex: "my upper right arm" — filled in automatically once you tap the map above, or describe it here if it's not on the map.</div>
+      </div>
+
+      <div class="photo-callout">
+        Have a reference picture for placement in mind? Attach it on the next step too — this one's optional.
+      </div>
+
+      <button type="button" class="btn solid" style="width:100%; margin-top:8px;" onclick="goToBookingForm()">CONTINUE TO SUBMIT REQUEST</button>
+      <div class="flow-note">
+        Opens the booking form with your details filled in — attach your reference photos there, then send.<br>
+        REQUEST → APPROVAL → PAYMENT INSTRUCTIONS SENT → CONFIRMED.
+      </div>
+    </form>
+
+  </div>
+</section>
+
+<footer>
+  <div>STUDIONAME · <span class="sign-off">no signal</span></div>
+  <div class="foot-links">
+    <a href="index.html">Home</a><a href="flash.html">Flash</a><a href="about.html">About</a><a href="policy.html">Policy</a><a href="faq.html">FAQ</a><a href="visit.html">Visit</a>
+  </div>
+</footer>
+
+<script>
+// ================================================================
+// GOOGLE FORM SETUP — replace these before going live
+// ================================================================
+// 1. Create a Google Form with these questions (short answer unless noted):
+//      Name · Pronouns · Age or birth date · Instagram · Phone ·
+//      Date requested · Description (paragraph) · Idea/theme (paragraph) ·
+//      Size · Black or color ink? · Placement ·
+//      Reference photos (file upload, required) · Placement reference (file upload, optional)
+//    Note: file-upload questions can't be pre-filled by URL — that's why
+//    they're not in FORM_FIELDS below. The person attaches those directly
+//    on the Google Form page.
+// 2. Click the 3-dot menu -> "Get pre-filled link", fill in dummy
+//    text in each field, click "Get link", then copy it.
+// 3. That copied URL looks like:
+//      https://docs.google.com/forms/d/e/XXXX/viewform?usp=pp_url&entry.111=a...
+//    Paste the base part (before the ?) into FORM_BASE below, and
+//    match each entry.NNN number to the right field below.
+// 4. In the Form itself: Settings -> Responses -> turn on
+//    "Get email notifications for new responses".
+// ================================================================
+const FORM_BASE = "https://docs.google.com/forms/d/e/REPLACE_WITH_YOUR_FORM_ID/viewform";
+const FORM_FIELDS = {
+  name:        "entry.111111111",
+  pronouns:    "entry.111111112",
+  age:         "entry.111111113",
+  instagram:   "entry.111111114",
+  phone:       "entry.111111115",
+  date:        "entry.333333333",
+  description: "entry.333333334",
+  idea:        "entry.555555555",
+  size:        "entry.555555556",
+  ink:         "entry.555555557",
+  placement:   "entry.444444444"
+};
+
+function goToBookingForm(){
+  const params = new URLSearchParams();
+  const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const placement = localStorage.getItem('selectedPlacement') || '';
+  const date = localStorage.getItem('selectedDate') || '';
+
+  params.set(FORM_FIELDS.name, get('f-name'));
+  params.set(FORM_FIELDS.pronouns, get('f-pronouns'));
+  params.set(FORM_FIELDS.age, get('f-age'));
+  params.set(FORM_FIELDS.instagram, get('f-instagram'));
+  params.set(FORM_FIELDS.phone, get('f-phone'));
+  params.set(FORM_FIELDS.date, date);
+  params.set(FORM_FIELDS.description, get('f-description'));
+  params.set(FORM_FIELDS.idea, get('f-idea'));
+  params.set(FORM_FIELDS.size, get('f-size'));
+  params.set(FORM_FIELDS.ink, get('f-ink'));
+  params.set(FORM_FIELDS.placement, placement);
+
+  window.open(FORM_BASE + "?usp=pp_url&" + params.toString(), "_blank");
+}
+
+// ---------- CRT boot / buffering (home page hero only) ----------
+function initCRT(){
+  const video = document.getElementById('static-video');
+  const canvas = document.getElementById('static-canvas');
+  const buffering = document.getElementById('buffering-overlay');
+  const content = document.getElementById('crt-content');
+  if(!video || !canvas) return;
+
+  let settled = false;
+  let usingVideo = true;
+  const ctx = canvas.getContext('2d');
+
+  function sizeCanvas(){
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  function drawStatic(){
+    const w = canvas.width, h = canvas.height;
+    if(!w || !h) return;
+    const redFlicker = Math.random() < 0.06;
+    const imgData = ctx.createImageData(w, h);
+    for (let i = 0; i < imgData.data.length; i += 4) {
+      const v = Math.random() * 255;
+      imgData.data[i] = redFlicker ? Math.min(255, v + 60) : v;
+      imgData.data[i+1] = v * 0.9;
+      imgData.data[i+2] = v * 0.9;
+      imgData.data[i+3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+  }
+
+  let canvasRunning = false;
+  let frame;
+  function startCanvasStatic(){
+    if(canvasRunning) return;
+    canvasRunning = true;
+    sizeCanvas();
+    window.addEventListener('resize', sizeCanvas);
+    (function loop(){
+      if(!canvasRunning) return;
+      drawStatic();
+      frame = requestAnimationFrame(loop);
+    })();
+  }
+
+  function settle(){
+    if(settled) return;
+    settled = true;
+    clearTimeout(fallbackTimer);
+    buffering.classList.add('hidden');
+    content.classList.add('visible');
+    if(usingVideo){ video.classList.add('settled'); }
+    else{ canvas.classList.add('settled'); }
+  }
+
+  function fallbackToCanvas(){
+    if(!usingVideo) return;
+    usingVideo = false;
+    video.style.display = 'none';
+    canvas.style.display = 'block';
+    startCanvasStatic();
+    settle();
+  }
+
+  // If no <source> was ever pointed at a real file, jump straight to fallback
+  const hasSource = video.querySelector('source') && video.querySelector('source').getAttribute('src') && !video.querySelector('source').getAttribute('src').includes('REPLACE');
+  const fallbackTimer = setTimeout(fallbackToCanvas, hasSource ? 2500 : 400);
+
+  video.addEventListener('canplaythrough', settle, { once:true });
+  video.addEventListener('error', fallbackToCanvas);
+  video.play().catch(fallbackToCanvas);
+}
+
+// ---------- FAQ accordion ----------
+function initFAQ(){
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    if(!q) return;
+    q.addEventListener('click', () => item.classList.toggle('open'));
+  });
+}
+
+// ---------- Body placement selector (placement.html) ----------
+function initPlacement(){
+  const regionOut = document.getElementById('region-out');
+  const confirmBox = document.getElementById('placement-confirm');
+  document.querySelectorAll('.body-region').forEach(region => {
+    region.addEventListener('click', () => {
+      document.querySelectorAll('.body-region').forEach(r => r.classList.remove('active'));
+      region.classList.add('active');
+      const name = region.getAttribute('data-name');
+      if(regionOut) regionOut.textContent = name;
+      localStorage.setItem('selectedPlacement', name);
+      if(confirmBox){
+        confirmBox.style.display = 'flex';
+        confirmBox.querySelector('em').textContent = name;
+      }
+    });
+  });
+}
+
+// ---------- Flash piece selection (flash.html) ----------
+function initFlash(){
+  document.querySelectorAll('.flash-tile:not(.taken)').forEach(tile => {
+    tile.style.cursor = 'pointer';
+    tile.addEventListener('click', () => {
+      const name = tile.getAttribute('data-name');
+      const price = tile.getAttribute('data-price');
+      localStorage.setItem('selectedFlash', `${name} (${price})`);
+      document.querySelectorAll('.flash-tile').forEach(t => t.style.outline = 'none');
+      tile.style.outline = '2px solid var(--blood)';
+      if(confirm(`Save "${name}" and head to Book now?`)){
+        window.location.href = 'book.html';
+      }
+    });
+  });
+}
+
+// ---------- Booking form placement readout (book.html) ----------
+function initBookingPlacementReadout(){
+  const el = document.getElementById('f-placement-display');
+  if(el){
+    const saved = localStorage.getItem('selectedPlacement');
+    el.textContent = saved ? saved : '— none yet, tap the map above —';
+  }
+  const dateEl = document.getElementById('f-date-display');
+  if(dateEl){
+    const savedDate = localStorage.getItem('selectedDate');
+    dateEl.textContent = savedDate ? savedDate : '— pick a date above —';
+  }
+  const flash = localStorage.getItem('selectedFlash');
+  const ideaEl = document.getElementById('f-idea');
+  if(flash && ideaEl && !ideaEl.value){
+    ideaEl.value = `Flash piece: ${flash}`;
+  }
+}
+
+// ---------- Calendar day picker ----------
+function initCalendar(){
+  document.querySelectorAll('.cal-day.open').forEach(day => {
+    day.addEventListener('click', () => {
+      document.querySelectorAll('.cal-day.open').forEach(d => d.style.outline = 'none');
+      day.style.outline = '2px solid var(--blood)';
+      const label = 'July ' + day.textContent + ', 2026';
+      localStorage.setItem('selectedDate', label);
+      const dateEl = document.getElementById('f-date-display');
+      if(dateEl) dateEl.textContent = label;
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initCRT();
+  initFAQ();
+  initPlacement();
+  initBookingPlacementReadout();
+  initCalendar();
+  initFlash();
+});
+
+</script>
+</body>
+</html>
